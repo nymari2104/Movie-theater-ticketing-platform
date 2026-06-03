@@ -1,0 +1,43 @@
+# Ideal gitignore for Maven projects and IDEs
+target/
+*.class
+*.log
+*.ctxt
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.classpath
+.project
+.factorypath
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# Local database / Indexing tools
+.codegraph/
+
+# System Files
+Thumbs.db
+Desktop.ini

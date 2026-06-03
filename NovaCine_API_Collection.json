@@ -1,0 +1,444 @@
+{
+	"info": {
+		"_postman_id": "novacine-ticketing-api-collection",
+		"name": "NovaCine Ticketing System API Collection",
+		"description": "Complete API collection for NovaCine Ticketing System (Spring Boot Microservices).\n\nFeatures:\n- Separate URLs and ports for Event Service (8081) and Booking Service (8082) for direct testing, with Gateway URL (8080) also defined.\n- Automatic variable management (No copy-pasting UUIDs!)\n- Auto showDate initialization (Today's date)\n- Response validation tests for all requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Event Service (Movies & Showtimes - Port 8081)",
+			"item": [
+				{
+					"name": "Get All Movies",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (!pm.collectionVariables.get('eventServiceUrl')) {",
+									"    pm.collectionVariables.set('eventServiceUrl', 'http://localhost:8081');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get movies list successfully', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an('array');",
+									"    if (responseJson.length > 0) {",
+									"        pm.collectionVariables.set('movieId', responseJson[0].id);",
+									"        pm.collectionVariables.set('movieTitle', responseJson[0].title);",
+									"        console.log('✅ Saved movieId: ' + responseJson[0].id);",
+									"        console.log('✅ Saved movieTitle: ' + responseJson[0].title);",
+									"        ",
+									"        // Tự động tính toán ngày hôm nay (YYYY-MM-DD) và lưu vào biến showDate",
+									"        const today = new Date();",
+									"        const yyyy = today.getFullYear();",
+									"        let mm = today.getMonth() + 1;",
+									"        let dd = today.getDate();",
+									"        if (mm < 10) mm = '0' + mm;",
+									"        if (dd < 10) dd = '0' + dd;",
+									"        const formattedToday = yyyy + '-' + mm + '-' + dd;",
+									"        pm.collectionVariables.set('showDate', formattedToday);",
+									"        console.log('📅 Saved showDate (Today): ' + formattedToday);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{eventServiceUrl}}/api/events/movies",
+							"host": [
+								"{{eventServiceUrl}}"
+							],
+							"path": [
+								"api",
+								"events",
+								"movies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Showtimes for Movie (Today)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Automatically calculate today's date in YYYY-MM-DD format",
+									"const today = new Date();",
+									"const yyyy = today.getFullYear();",
+									"let mm = today.getMonth() + 1;",
+									"let dd = today.getDate();",
+									"if (mm < 10) mm = '0' + mm;",
+									"if (dd < 10) dd = '0' + dd;",
+									"const formattedToday = yyyy + '-' + mm + '-' + dd;",
+									"pm.collectionVariables.set('showDate', formattedToday);",
+									"console.log('📅 Computed showDate (Today): ' + formattedToday);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get showtimes successfully', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an('array');",
+									"    if (responseJson.length > 0) {",
+									"        pm.collectionVariables.set('showtimeId', responseJson[0].id);",
+									"        console.log('✅ Saved showtimeId: ' + responseJson[0].id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{eventServiceUrl}}/api/events/showtimes?movieId={{movieId}}&showDate={{showDate}}",
+							"host": [
+								"{{eventServiceUrl}}"
+							],
+							"path": [
+								"api",
+								"events",
+								"showtimes"
+							],
+							"query": [
+								{
+									"key": "movieId",
+									"value": "{{movieId}}"
+								},
+								{
+									"key": "showDate",
+									"value": "{{showDate}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Seat Map for Showtime",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get seats successfully', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an('array');",
+									"    ",
+									"    // Filter out available seats to reserve",
+									"    const availableSeats = responseJson.filter(s => s.status === 'AVAILABLE');",
+									"    pm.expect(availableSeats.length).to.be.above(1, 'Need at least 2 available seats to test');",
+									"    ",
+									"    if (availableSeats.length >= 2) {",
+									"        pm.collectionVariables.set('seatId1', availableSeats[0].id);",
+									"        pm.collectionVariables.set('seatNumber1', availableSeats[0].seatNumber);",
+									"        pm.collectionVariables.set('seatId2', availableSeats[1].id);",
+									"        pm.collectionVariables.set('seatNumber2', availableSeats[1].seatNumber);",
+									"        ",
+									"        console.log('✅ Saved seatId1: ' + availableSeats[0].id + ' (' + availableSeats[0].seatNumber + ')');",
+									"        console.log('✅ Saved seatId2: ' + availableSeats[1].id + ' (' + availableSeats[1].seatNumber + ')');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{eventServiceUrl}}/api/events/showtimes/{{showtimeId}}/seats",
+							"host": [
+								"{{eventServiceUrl}}"
+							],
+							"path": [
+								"api",
+								"events",
+								"showtimes",
+								"{{showtimeId}}",
+								"seats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Booking Service (Seat Locking - Port 8082)",
+			"item": [
+				{
+					"name": "Create Booking (Lock Seats PENDING)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (!pm.collectionVariables.get('bookingServiceUrl')) {",
+									"    pm.collectionVariables.set('bookingServiceUrl', 'http://localhost:8082');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Booking created and status is PENDING', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson.status).to.eql('PENDING');",
+									"    pm.collectionVariables.set('bookingId', responseJson.id);",
+									"    console.log('✅ Saved bookingId: ' + responseJson.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"customer_trouni\",\n  \"showtimeId\": \"{{showtimeId}}\",\n  \"seatIds\": [\n    \"{{seatId1}}\",\n    \"{{seatId2}}\"\n  ],\n  \"seatNumbers\": [\n    \"{{seatNumber1}}\",\n    \"{{seatNumber2}}\"\n  ],\n  \"bookingDate\": \"{{showDate}}\",\n  \"totalPrice\": 180000.00\n}"
+						},
+						"url": {
+							"raw": "{{bookingServiceUrl}}/api/bookings",
+							"host": [
+								"{{bookingServiceUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Booking (CONFIRMED -> Seats BOOKED)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Booking is CONFIRMED', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.status).to.eql('CONFIRMED');",
+									"    console.log('✅ Booking successfully confirmed!');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{bookingServiceUrl}}/api/bookings/{{bookingId}}/confirm",
+							"host": [
+								"{{bookingServiceUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"{{bookingId}}",
+								"confirm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Booking (CANCELLED -> Seats AVAILABLE)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Booking is CANCELLED', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.status).to.eql('CANCELLED');",
+									"    console.log('✅ Booking successfully cancelled & seats released!');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{bookingServiceUrl}}/api/bookings/{{bookingId}}/cancel",
+							"host": [
+								"{{bookingServiceUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"{{bookingId}}",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Get booking details successfully', function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('id');",
+									"    pm.expect(responseJson.id).to.eql(pm.collectionVariables.get('bookingId'));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{bookingServiceUrl}}/api/bookings/{{bookingId}}",
+							"host": [
+								"{{bookingServiceUrl}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"{{bookingId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "eventServiceUrl",
+			"value": "http://localhost:8081",
+			"type": "string"
+		},
+		{
+			"key": "bookingServiceUrl",
+			"value": "http://localhost:8082",
+			"type": "string"
+		},
+		{
+			"key": "gatewayUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "movieId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "movieTitle",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "showtimeId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "showDate",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seatId1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seatNumber1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seatId2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seatNumber2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "bookingId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
