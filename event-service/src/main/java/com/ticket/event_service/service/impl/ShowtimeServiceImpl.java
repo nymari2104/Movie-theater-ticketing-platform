@@ -11,12 +11,16 @@ import com.ticket.event_service.repository.MovieRepository;
 import com.ticket.event_service.repository.SeatRepository;
 import com.ticket.event_service.repository.ShowtimeRepository;
 import com.ticket.event_service.service.ShowtimeService;
+import com.ticket.common.exception.AppException;
+import com.ticket.event_service.exception.errorcode.EventErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,9 +38,10 @@ public class ShowtimeServiceImpl implements ShowtimeService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "showtimes", allEntries = true)
     public ShowtimeResponse createShowtime(ShowtimeRequest request) {
         Movie movie = movieRepository.findById(request.getMovieId())
-                .orElseThrow(() -> new RuntimeException("Movie not found with id: " + request.getMovieId()));
+                .orElseThrow(() -> new AppException(EventErrorCode.MOVIE_NOT_FOUND, "Movie not found with id: " + request.getMovieId()));
 
         Showtime showtime = new Showtime();
         showtime.setMovie(movie);
@@ -66,6 +71,7 @@ public class ShowtimeServiceImpl implements ShowtimeService {
     }
 
     @Override
+    @Cacheable(value = "showtimes", key = "#movieId.toString() + ':' + #showDate.toString()")
     public List<ShowtimeResponse> getShowtimesByMovieAndDate(UUID movieId, LocalDate showDate) {
         return showtimeRepository.findByMovieIdAndShowDate(movieId, showDate).stream()
                 .map(this::mapToResponse)

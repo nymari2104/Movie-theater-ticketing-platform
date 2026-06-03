@@ -5,6 +5,10 @@ import com.ticket.event_service.dto.MovieResponse;
 import com.ticket.event_service.model.Movie;
 import com.ticket.event_service.repository.MovieRepository;
 import com.ticket.event_service.service.MovieService;
+import com.ticket.common.exception.AppException;
+import com.ticket.event_service.exception.errorcode.EventErrorCode;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
@@ -20,6 +24,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @CacheEvict(value = "movies", allEntries = true)
     public MovieResponse createMovie(MovieRequest request) {
         Movie movie = new Movie();
         movie.setTitle(request.getTitle());
@@ -33,6 +38,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Cacheable(value = "movies", key = "'all'")
     public List<MovieResponse> getAllMovies() {
         return movieRepository.findAll().stream()
                 .map(this::mapToResponse)
@@ -40,9 +46,10 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Cacheable(value = "movies", key = "#id")
     public MovieResponse getMovieById(UUID id) {
         Movie movie = movieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Movie not found with id: " + id));
+                .orElseThrow(() -> new AppException(EventErrorCode.MOVIE_NOT_FOUND, "Movie not found with id: " + id));
         return mapToResponse(movie);
     }
 

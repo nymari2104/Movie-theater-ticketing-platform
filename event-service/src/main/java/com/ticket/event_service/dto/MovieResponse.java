@@ -1,9 +1,12 @@
 package com.ticket.event_service.dto;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class MovieResponse {
+public class MovieResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private UUID id;
     private String title;
     private String description;
