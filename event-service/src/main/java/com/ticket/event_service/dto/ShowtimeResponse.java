@@ -3,7 +3,7 @@ package com.ticket.event_service.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 public class ShowtimeResponse implements Serializable {
@@ -13,15 +13,15 @@ public class ShowtimeResponse implements Serializable {
     private UUID movieId;
     private String movieTitle;
     private LocalDate showDate;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private String roomName;
     private BigDecimal price;
 
     public ShowtimeResponse() {
     }
 
-    public ShowtimeResponse(UUID id, UUID movieId, String movieTitle, LocalDate showDate, LocalDateTime startTime, LocalDateTime endTime, String roomName, BigDecimal price) {
+    public ShowtimeResponse(UUID id, UUID movieId, String movieTitle, LocalDate showDate, LocalTime startTime, LocalTime endTime, String roomName, BigDecimal price) {
         this.id = id;
         this.movieId = movieId;
         this.movieTitle = movieTitle;
@@ -64,19 +64,19 @@ public class ShowtimeResponse implements Serializable {
         this.showDate = showDate;
     }
 
-    public LocalDateTime getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 

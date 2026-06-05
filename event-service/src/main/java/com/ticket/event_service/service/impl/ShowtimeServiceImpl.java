@@ -96,8 +96,8 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                 showtime.getMovie().getId(),
                 showtime.getMovie().getTitle(),
                 showtime.getShowDate(),
-                showtime.getStartTime(),
-                showtime.getEndTime(),
+                showtime.getStartTime() != null ? showtime.getStartTime().toLocalTime() : null,
+                showtime.getEndTime() != null ? showtime.getEndTime().toLocalTime() : null,
                 showtime.getRoomName(),
                 showtime.getPrice()
         );
