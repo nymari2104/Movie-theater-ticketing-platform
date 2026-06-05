@@ -2,6 +2,8 @@ package com.ticket.event_service.init;
 
 import com.ticket.event_service.model.Movie;
 import com.ticket.event_service.repository.MovieRepository;
+import com.ticket.event_service.repository.SeatRepository;
+import com.ticket.event_service.repository.ShowtimeRepository;
 import com.ticket.event_service.service.ShowtimeService;
 import com.ticket.event_service.dto.ShowtimeRequest;
 import org.springframework.boot.CommandLineRunner;
@@ -14,67 +16,114 @@ import java.time.LocalDateTime;
 public class DataSeeder implements CommandLineRunner {
 
     private final MovieRepository movieRepository;
+    private final ShowtimeRepository showtimeRepository;
+    private final SeatRepository seatRepository;
     private final ShowtimeService showtimeService;
 
-    public DataSeeder(MovieRepository movieRepository, ShowtimeService showtimeService) {
+    public DataSeeder(MovieRepository movieRepository, 
+                      ShowtimeRepository showtimeRepository, 
+                      SeatRepository seatRepository, 
+                      ShowtimeService showtimeService) {
         this.movieRepository = movieRepository;
+        this.showtimeRepository = showtimeRepository;
+        this.seatRepository = seatRepository;
         this.showtimeService = showtimeService;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        if (movieRepository.count() == 0) {
-            // Seed Movies
-            Movie movie1 = new Movie();
-            movie1.setTitle("Lat Mat 7: Mot Dieu Uoc");
-            movie1.setDescription("Bo phim tam ly tinh cam gia dinh day xuc dong cua dao dien Ly Hai.");
-            movie1.setDurationMinutes(138);
-            movie1.setReleaseDate(LocalDate.of(2026, 4, 26));
-            movie1.setEndDate(LocalDate.of(2026, 7, 30));
-            Movie savedMovie1 = movieRepository.save(movie1);
+        System.out.println(">>> STARTING DATA SEEDING CLEANUP <<<");
+        // Dọn dẹp dữ liệu cũ
+        seatRepository.deleteAll();
+        showtimeRepository.deleteAll();
+        movieRepository.deleteAll();
+        System.out.println(">>> CLEANUP SUCCESSFUL. STARTING SEEDING MOCK DATA <<<");
 
-            Movie movie2 = new Movie();
-            movie2.setTitle("Doraemon: Ban Giao Huong Dia Cau");
-            movie2.setDescription("Hanh trinh phieu luu am nhac ky thu cua Doraemon va nhung nguoi ban.");
-            movie2.setDurationMinutes(115);
-            movie2.setReleaseDate(LocalDate.of(2026, 5, 24));
-            movie2.setEndDate(LocalDate.of(2026, 8, 15));
-            Movie savedMovie2 = movieRepository.save(movie2);
+        // 1. Seed Movies
+        Movie movie1 = new Movie();
+        movie1.setTitle("Lật Mặt 7: Một Điều Ước");
+        movie1.setDescription("Bộ phim tâm lý tình cảm gia đình đầy cảm động và ý nghĩa của đạo diễn Lý Hải.");
+        movie1.setDurationMinutes(138);
+        movie1.setReleaseDate(LocalDate.now().minusDays(10));
+        movie1.setEndDate(LocalDate.now().plusDays(30));
+        Movie m1 = movieRepository.save(movie1);
 
-            // Seed Showtimes (Và tu dong sinh ghe nho logic trong ShowtimeServiceImpl)
-            LocalDate today = LocalDate.now();
-            
-            // Suat chieu 1 cho Lat Mat 7 (Hom nay, 18:00 - 20:18, Rap 1, gia 90,000 VND)
-            ShowtimeRequest showtime1 = new ShowtimeRequest();
-            showtime1.setMovieId(savedMovie1.getId());
-            showtime1.setShowDate(today);
-            showtime1.setStartTime(LocalDateTime.of(today.getYear(), today.getMonthValue(), today.getDayOfMonth(), 18, 0));
-            showtime1.setEndTime(LocalDateTime.of(today.getYear(), today.getMonthValue(), today.getDayOfMonth(), 20, 18));
-            showtime1.setRoomName("Rap 1");
-            showtime1.setPrice(new BigDecimal("90000.00"));
-            showtimeService.createShowtime(showtime1);
+        Movie movie2 = new Movie();
+        movie2.setTitle("Doraemon: Bản Giao Hưởng Địa Cầu");
+        movie2.setDescription("Hành trình phiêu lưu âm nhạc kỳ thú của Doraemon, Nobita và những người bạn để giải cứu Trái Đất.");
+        movie2.setDurationMinutes(115);
+        movie2.setReleaseDate(LocalDate.now().minusDays(5));
+        movie2.setEndDate(LocalDate.now().plusDays(20));
+        Movie m2 = movieRepository.save(movie2);
 
-            // Suat chieu 2 cho Lat Mat 7 (Hom nay, 21:00 - 23:18, Rap 1, gia 95,000 VND)
-            ShowtimeRequest showtime2 = new ShowtimeRequest();
-            showtime2.setMovieId(savedMovie1.getId());
-            showtime2.setShowDate(today);
-            showtime2.setStartTime(LocalDateTime.of(today.getYear(), today.getMonthValue(), today.getDayOfMonth(), 21, 0));
-            showtime2.setEndTime(LocalDateTime.of(today.getYear(), today.getMonthValue(), today.getDayOfMonth(), 23, 18));
-            showtime2.setRoomName("Rap 1");
-            showtime2.setPrice(new BigDecimal("95000.00"));
-            showtimeService.createShowtime(showtime2);
+        Movie movie3 = new Movie();
+        movie3.setTitle("Deadpool & Wolverine");
+        movie3.setDescription("Deadpool bắt tay cùng Wolverine trong một nhiệm vụ giải cứu đa vũ trụ đầy hài hước, kịch tính và hành động mãn nhãn.");
+        movie3.setDurationMinutes(127);
+        movie3.setReleaseDate(LocalDate.now().minusDays(2));
+        movie3.setEndDate(LocalDate.now().plusDays(45));
+        Movie m3 = movieRepository.save(movie3);
 
-            // Suat chieu 3 cho Doraemon (Hom nay, 15:00 - 16:55, Rap 2, gia 80,000 VND)
-            ShowtimeRequest showtime3 = new ShowtimeRequest();
-            showtime3.setMovieId(savedMovie2.getId());
-            showtime3.setShowDate(today);
-            showtime3.setStartTime(LocalDateTime.of(today.getYear(), today.getMonthValue(), today.getDayOfMonth(), 15, 0));
-            showtime3.setEndTime(LocalDateTime.of(today.getYear(), today.getMonthValue(), today.getDayOfMonth(), 16, 55));
-            showtime3.setRoomName("Rap 2");
-            showtime3.setPrice(new BigDecimal("80000.00"));
-            showtimeService.createShowtime(showtime3);
+        Movie movie4 = new Movie();
+        movie4.setTitle("Inside Out 2");
+        movie4.setDescription("Riley bước vào tuổi dậy thì với sự xuất hiện của những cảm xúc mới tinh như Lo Âu, Ghen Tị, Sĩ Diện.");
+        movie4.setDurationMinutes(96);
+        movie4.setReleaseDate(LocalDate.now().minusDays(1));
+        movie4.setEndDate(LocalDate.now().plusDays(25));
+        Movie m4 = movieRepository.save(movie4);
 
-            System.out.println(">>> DATA SEEDING COMPLETED SUCCESSFULLY! <<<");
+        Movie movie5 = new Movie();
+        movie5.setTitle("Dune: Hành Tinh Cát - Phần 2");
+        movie5.setDescription("Paul Atreides đồng hành cùng Chani và người Fremen để trả thù những kẻ đã hủy hoại gia đình mình.");
+        movie5.setDurationMinutes(166);
+        movie5.setReleaseDate(LocalDate.now().minusDays(20));
+        movie5.setEndDate(LocalDate.now().plusDays(15));
+        Movie m5 = movieRepository.save(movie5);
+
+        // 2. Seed Showtimes cho 3 ngày (Hôm nay, Ngày mai, Ngày kia)
+        LocalDate[] dates = {
+            LocalDate.now(),
+            LocalDate.now().plusDays(1),
+            LocalDate.now().plusDays(2)
+        };
+
+        for (LocalDate date : dates) {
+            // --- Lật Mặt 7 ---
+            createShowtime(m1.getId(), date, 10, 0, 12, 18, "Rạp 1 (Standard)", "80000.00");
+            createShowtime(m1.getId(), date, 14, 0, 16, 18, "Rạp 1 (Standard)", "90000.00");
+            createShowtime(m1.getId(), date, 18, 0, 20, 18, "Rạp 1 (Standard)", "100000.00");
+            createShowtime(m1.getId(), date, 21, 0, 23, 18, "Rạp 3 (IMAX 3D)", "150000.00");
+
+            // --- Doraemon ---
+            createShowtime(m2.getId(), date, 9, 0, 10, 55, "Rạp 2 (Standard)", "80000.00");
+            createShowtime(m2.getId(), date, 13, 0, 14, 55, "Rạp 2 (Standard)", "80000.00");
+            createShowtime(m2.getId(), date, 16, 0, 17, 55, "Rạp 2 (Standard)", "90000.00");
+
+            // --- Deadpool & Wolverine ---
+            createShowtime(m3.getId(), date, 15, 0, 17, 7, "Rạp 3 (IMAX 3D)", "140000.00");
+            createShowtime(m3.getId(), date, 19, 0, 21, 7, "Rạp 3 (IMAX 3D)", "160000.00");
+            createShowtime(m3.getId(), date, 21, 30, 23, 37, "Rạp 4 (VIP Gold Class)", "200000.00");
+
+            // --- Inside Out 2 ---
+            createShowtime(m4.getId(), date, 11, 0, 12, 36, "Rạp 2 (Standard)", "80000.00");
+            createShowtime(m4.getId(), date, 17, 30, 19, 6, "Rạp 4 (VIP Gold Class)", "180000.00");
+
+            // --- Dune: Part Two ---
+            createShowtime(m5.getId(), date, 13, 30, 16, 16, "Rạp 4 (VIP Gold Class)", "180000.00");
+            createShowtime(m5.getId(), date, 20, 0, 22, 46, "Rạp 2 (Standard)", "100000.00");
         }
+
+        System.out.println(">>> MOCK DATA SEEDING COMPLETED SUCCESSFULLY! <<<");
+    }
+
+    private void createShowtime(java.util.UUID movieId, LocalDate date, int startH, int startM, int endH, int endM, String room, String price) {
+        ShowtimeRequest request = new ShowtimeRequest();
+        request.setMovieId(movieId);
+        request.setShowDate(date);
+        request.setStartTime(LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), startH, startM));
+        request.setEndTime(LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), endH, endM));
+        request.setRoomName(room);
+        request.setPrice(new BigDecimal(price));
+        showtimeService.createShowtime(request);
     }
 }
