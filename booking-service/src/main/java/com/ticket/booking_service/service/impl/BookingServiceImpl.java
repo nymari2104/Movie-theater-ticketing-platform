@@ -26,15 +26,18 @@ public class BookingServiceImpl implements BookingService {
     private final BookingSeatRepository bookingSeatRepository;
     private final EventClient eventClient;
     private final DistributedLockService distributedLockService;
+    private final org.springframework.kafka.core.KafkaTemplate<String, Object> kafkaTemplate;
 
     public BookingServiceImpl(BookingRepository bookingRepository, 
                               BookingSeatRepository bookingSeatRepository, 
                               EventClient eventClient,
-                              DistributedLockService distributedLockService) {
+                              DistributedLockService distributedLockService,
+                              org.springframework.kafka.core.KafkaTemplate<String, Object> kafkaTemplate) {
         this.bookingRepository = bookingRepository;
         this.bookingSeatRepository = bookingSeatRepository;
         this.eventClient = eventClient;
         this.distributedLockService = distributedLockService;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -104,6 +107,16 @@ public class BookingServiceImpl implements BookingService {
                 bookingSeats.add(bookingSeat);
             }
             bookingSeatRepository.saveAll(bookingSeats);
+
+            // Gửi sự kiện tạo booking sang Kafka
+            com.ticket.common.event.BookingCreatedEvent event = new com.ticket.common.event.BookingCreatedEvent(
+                savedBooking.getId(),
+                savedBooking.getUserId(),
+                savedBooking.getShowtimeId(),
+                savedBooking.getTotalPrice(),
+                seatIds
+            );
+            kafkaTemplate.send("booking-created-events", savedBooking.getId().toString(), event);
 
             return mapToResponse(savedBooking, bookingSeats);
         } finally {
