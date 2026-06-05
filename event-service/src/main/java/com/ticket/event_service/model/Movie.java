@@ -27,16 +27,20 @@ public class Movie {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
+    @Column(name = "poster_url", length = 1000)
+    private String posterUrl;
+
     public Movie() {
     }
 
-    public Movie(UUID id, String title, String description, Integer durationMinutes, LocalDate releaseDate, LocalDate endDate) {
+    public Movie(UUID id, String title, String description, Integer durationMinutes, LocalDate releaseDate, LocalDate endDate, String posterUrl) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.durationMinutes = durationMinutes;
         this.releaseDate = releaseDate;
         this.endDate = endDate;
+        this.posterUrl = posterUrl;
     }
 
     public UUID getId() {
@@ -85,5 +89,13 @@ public class Movie {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
     }
 }

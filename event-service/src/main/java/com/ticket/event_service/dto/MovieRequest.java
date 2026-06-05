@@ -9,15 +9,18 @@ public class MovieRequest {
     private LocalDate releaseDate;
     private LocalDate endDate;
 
+    private String posterUrl;
+
     public MovieRequest() {
     }
 
-    public MovieRequest(String title, String description, Integer durationMinutes, LocalDate releaseDate, LocalDate endDate) {
+    public MovieRequest(String title, String description, Integer durationMinutes, LocalDate releaseDate, LocalDate endDate, String posterUrl) {
         this.title = title;
         this.description = description;
         this.durationMinutes = durationMinutes;
         this.releaseDate = releaseDate;
         this.endDate = endDate;
+        this.posterUrl = posterUrl;
     }
 
     public String getTitle() {
@@ -58,5 +61,13 @@ public class MovieRequest {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
     }
 }

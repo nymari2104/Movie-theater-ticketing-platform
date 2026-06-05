@@ -46,6 +46,7 @@ public class DataSeeder implements CommandLineRunner {
         movie1.setDurationMinutes(138);
         movie1.setReleaseDate(LocalDate.now().minusDays(10));
         movie1.setEndDate(LocalDate.now().plusDays(30));
+        movie1.setPosterUrl("https://image.lag.vn/upload/news/24/04/29/lat-mat-7-mot-dieu-uoc-khoi-chieu-ngay-26042024_WFYI.jpg");
         Movie m1 = movieRepository.save(movie1);
 
         Movie movie2 = new Movie();
@@ -54,6 +55,7 @@ public class DataSeeder implements CommandLineRunner {
         movie2.setDurationMinutes(115);
         movie2.setReleaseDate(LocalDate.now().minusDays(5));
         movie2.setEndDate(LocalDate.now().plusDays(20));
+        movie2.setPosterUrl("https://www.cgv.vn/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/o/doraemon_2024_teaser_poster_1_.jpg");
         Movie m2 = movieRepository.save(movie2);
 
         Movie movie3 = new Movie();
@@ -62,6 +64,7 @@ public class DataSeeder implements CommandLineRunner {
         movie3.setDurationMinutes(127);
         movie3.setReleaseDate(LocalDate.now().minusDays(2));
         movie3.setEndDate(LocalDate.now().plusDays(45));
+        movie3.setPosterUrl("https://www.cgv.vn/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/p/dp_w_payoff_1_sheet_vietnam_1_.jpg");
         Movie m3 = movieRepository.save(movie3);
 
         Movie movie4 = new Movie();
@@ -70,6 +73,7 @@ public class DataSeeder implements CommandLineRunner {
         movie4.setDurationMinutes(96);
         movie4.setReleaseDate(LocalDate.now().minusDays(1));
         movie4.setEndDate(LocalDate.now().plusDays(25));
+        movie4.setPosterUrl("https://www.cgv.vn/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/i/o/io2_payoff_vietnam_1_sheet_1_.jpg");
         Movie m4 = movieRepository.save(movie4);
 
         Movie movie5 = new Movie();
@@ -78,6 +82,7 @@ public class DataSeeder implements CommandLineRunner {
         movie5.setDurationMinutes(166);
         movie5.setReleaseDate(LocalDate.now().minusDays(20));
         movie5.setEndDate(LocalDate.now().plusDays(15));
+        movie5.setPosterUrl("https://www.cgv.vn/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/u/dune_part_two_vietnam_poster_1_.jpg");
         Movie m5 = movieRepository.save(movie5);
 
         // 2. Seed Showtimes cho 3 ngày (Hôm nay, Ngày mai, Ngày kia)

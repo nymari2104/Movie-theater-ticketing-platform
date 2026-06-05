@@ -32,6 +32,7 @@ public class MovieServiceImpl implements MovieService {
         movie.setDurationMinutes(request.getDurationMinutes());
         movie.setReleaseDate(request.getReleaseDate());
         movie.setEndDate(request.getEndDate());
+        movie.setPosterUrl(request.getPosterUrl());
 
         Movie savedMovie = movieRepository.save(movie);
         return mapToResponse(savedMovie);
@@ -60,7 +61,8 @@ public class MovieServiceImpl implements MovieService {
                 movie.getDescription(),
                 movie.getDurationMinutes(),
                 movie.getReleaseDate(),
-                movie.getEndDate()
+                movie.getEndDate(),
+                movie.getPosterUrl()
         );
     }
 }

@@ -132,10 +132,11 @@ Khi xảy ra lỗi (ví dụ: trùng ghế, không tìm thấy phim, sai dữ li
       "data": [
         {
           "id": "bd298426-ef40-441a-9b21-3d20bfffa316",
-          "title": "Lat Mat 7: Mot Dieu Uoc",
+          "title": "Lật Mặt 7: Một Điều Ước",
           "genre": "Drama/Family",
           "duration": 138,
-          "releaseDate": "2026-06-05"
+          "releaseDate": "2026-06-05",
+          "posterUrl": "https://image.lag.vn/upload/news/24/04/29/lat-mat-7-mot-dieu-uoc-khoi-chieu-ngay-26042024_WFYI.jpg"
         }
       ]
     }
