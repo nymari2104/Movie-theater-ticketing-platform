@@ -1,5 +1,6 @@
 package com.ticket.event_service.controller;
 
+import com.ticket.common.dto.ApiResponse;
 import com.ticket.event_service.dto.MovieRequest;
 import com.ticket.event_service.dto.MovieResponse;
 import com.ticket.event_service.service.MovieService;
@@ -20,17 +21,17 @@ public class MovieController {
     }
 
     @PostMapping
-    public ResponseEntity<MovieResponse> createMovie(@RequestBody MovieRequest request) {
-        return new ResponseEntity<>(movieService.createMovie(request), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<MovieResponse>> createMovie(@RequestBody MovieRequest request) {
+        return new ResponseEntity<>(ApiResponse.success("Movie created successfully", movieService.createMovie(request)), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<MovieResponse>> getAllMovies() {
-        return ResponseEntity.ok(movieService.getAllMovies());
+    public ResponseEntity<ApiResponse<List<MovieResponse>>> getAllMovies() {
+        return ResponseEntity.ok(ApiResponse.success("Get all movies successfully", movieService.getAllMovies()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MovieResponse> getMovieById(@PathVariable UUID id) {
-        return ResponseEntity.ok(movieService.getMovieById(id));
+    public ResponseEntity<ApiResponse<MovieResponse>> getMovieById(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success("Get movie details successfully", movieService.getMovieById(id)));
     }
 }

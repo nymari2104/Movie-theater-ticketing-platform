@@ -1,5 +1,6 @@
 package com.ticket.event_service.controller;
 
+import com.ticket.common.dto.ApiResponse;
 import com.ticket.event_service.dto.SeatResponse;
 import com.ticket.event_service.dto.ShowtimeRequest;
 import com.ticket.event_service.dto.ShowtimeResponse;
@@ -23,19 +24,19 @@ public class ShowtimeController {
     }
 
     @PostMapping
-    public ResponseEntity<ShowtimeResponse> createShowtime(@RequestBody ShowtimeRequest request) {
-        return new ResponseEntity<>(showtimeService.createShowtime(request), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<ShowtimeResponse>> createShowtime(@RequestBody ShowtimeRequest request) {
+        return new ResponseEntity<>(ApiResponse.success("Showtime created successfully", showtimeService.createShowtime(request)), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<ShowtimeResponse>> getShowtimes(
+    public ResponseEntity<ApiResponse<List<ShowtimeResponse>>> getShowtimes(
             @RequestParam UUID movieId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate showDate) {
-        return ResponseEntity.ok(showtimeService.getShowtimesByMovieAndDate(movieId, showDate));
+        return ResponseEntity.ok(ApiResponse.success("Get showtimes successfully", showtimeService.getShowtimesByMovieAndDate(movieId, showDate)));
     }
 
     @GetMapping("/{showtimeId}/seats")
-    public ResponseEntity<List<SeatResponse>> getSeats(@PathVariable UUID showtimeId) {
-        return ResponseEntity.ok(showtimeService.getSeatsByShowtime(showtimeId));
+    public ResponseEntity<ApiResponse<List<SeatResponse>>> getSeats(@PathVariable UUID showtimeId) {
+        return ResponseEntity.ok(ApiResponse.success("Get seats successfully", showtimeService.getSeatsByShowtime(showtimeId)));
     }
 }

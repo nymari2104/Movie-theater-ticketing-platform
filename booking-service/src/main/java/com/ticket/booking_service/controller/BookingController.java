@@ -1,5 +1,6 @@
 package com.ticket.booking_service.controller;
 
+import com.ticket.common.dto.ApiResponse;
 import com.ticket.booking_service.dto.BookingRequest;
 import com.ticket.booking_service.dto.BookingResponse;
 import com.ticket.booking_service.service.BookingService;
@@ -19,22 +20,22 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<BookingResponse> createBooking(@RequestBody BookingRequest request) {
-        return new ResponseEntity<>(bookingService.createBooking(request), HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<BookingResponse>> createBooking(@RequestBody BookingRequest request) {
+        return new ResponseEntity<>(ApiResponse.success("Booking created successfully", bookingService.createBooking(request)), HttpStatus.CREATED);
     }
 
     @PostMapping("/{bookingId}/confirm")
-    public ResponseEntity<BookingResponse> confirmBooking(@PathVariable UUID bookingId) {
-        return ResponseEntity.ok(bookingService.confirmBooking(bookingId));
+    public ResponseEntity<ApiResponse<BookingResponse>> confirmBooking(@PathVariable UUID bookingId) {
+        return ResponseEntity.ok(ApiResponse.success("Booking confirmed successfully", bookingService.confirmBooking(bookingId)));
     }
 
     @PostMapping("/{bookingId}/cancel")
-    public ResponseEntity<BookingResponse> cancelBooking(@PathVariable UUID bookingId) {
-        return ResponseEntity.ok(bookingService.cancelBooking(bookingId));
+    public ResponseEntity<ApiResponse<BookingResponse>> cancelBooking(@PathVariable UUID bookingId) {
+        return ResponseEntity.ok(ApiResponse.success("Booking cancelled successfully", bookingService.cancelBooking(bookingId)));
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<BookingResponse> getBookingById(@PathVariable UUID bookingId) {
-        return ResponseEntity.ok(bookingService.getBookingById(bookingId));
+    public ResponseEntity<ApiResponse<BookingResponse>> getBookingById(@PathVariable UUID bookingId) {
+        return ResponseEntity.ok(ApiResponse.success("Get booking details successfully", bookingService.getBookingById(bookingId)));
     }
 }
