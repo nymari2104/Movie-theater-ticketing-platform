@@ -14,19 +14,19 @@ public class MovieResponse implements Serializable {
     private LocalDate releaseDate;
     private LocalDate endDate;
 
-    private String posterUrl;
+    private String posterBase64;
 
     public MovieResponse() {
     }
 
-    public MovieResponse(UUID id, String title, String description, Integer durationMinutes, LocalDate releaseDate, LocalDate endDate, String posterUrl) {
+    public MovieResponse(UUID id, String title, String description, Integer durationMinutes, LocalDate releaseDate, LocalDate endDate, String posterBase64) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.durationMinutes = durationMinutes;
         this.releaseDate = releaseDate;
         this.endDate = endDate;
-        this.posterUrl = posterUrl;
+        this.posterBase64 = posterBase64;
     }
 
     public UUID getId() {
@@ -77,11 +77,11 @@ public class MovieResponse implements Serializable {
         this.endDate = endDate;
     }
 
-    public String getPosterUrl() {
-        return posterUrl;
+    public String getPosterBase64() {
+        return posterBase64;
     }
 
-    public void setPosterUrl(String posterUrl) {
-        this.posterUrl = posterUrl;
+    public void setPosterBase64(String posterBase64) {
+        this.posterBase64 = posterBase64;
     }
 }

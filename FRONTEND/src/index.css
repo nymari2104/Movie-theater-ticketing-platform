@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-bg: #0A0A0C;
+  --color-brand-card: #141416;
+  --color-brand-accent: #E5A93B; /* Cinema Gold */
+  --color-brand-accent-hover: #F2C063;
+  --color-brand-accent-glow: rgba(229, 169, 59, 0.12);
+  --color-brand-text: #F5F5F7;
+  --color-brand-muted: #A1A1A9;
+  --color-brand-border: #222226;
+  
+  --font-sans: "Outfit", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", monospace;
+}
+
+/* Custom scrollbar and global styles */
+html, body {
+  background-color: #0A0A0C;
+  color: #F5F5F7;
+  font-family: "Outfit", system-ui, -apple-system, sans-serif;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0A0C;
+}
+::-webkit-scrollbar-thumb {
+  background: #222226;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3F3F46;
+}
+
+/* Cinematic glows and styling utilities */
+.cinematic-glow {
+  box-shadow: 0 0 50px -10px rgba(229, 169, 59, 0.12);
+}
+
+.theater-curve {
+  border-top-left-radius: 50% 20px;
+  border-top-right-radius: 50% 20px;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #FFFFFF 0%, #A1A1A9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

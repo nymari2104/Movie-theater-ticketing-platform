@@ -27,20 +27,20 @@ public class Movie {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(name = "poster_url", length = 1000)
-    private String posterUrl;
+    @Column(name = "poster_data", columnDefinition = "bytea")
+    private byte[] posterData;
 
     public Movie() {
     }
 
-    public Movie(UUID id, String title, String description, Integer durationMinutes, LocalDate releaseDate, LocalDate endDate, String posterUrl) {
+    public Movie(UUID id, String title, String description, Integer durationMinutes, LocalDate releaseDate, LocalDate endDate, byte[] posterData) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.durationMinutes = durationMinutes;
         this.releaseDate = releaseDate;
         this.endDate = endDate;
-        this.posterUrl = posterUrl;
+        this.posterData = posterData;
     }
 
     public UUID getId() {
@@ -91,11 +91,11 @@ public class Movie {
         this.endDate = endDate;
     }
 
-    public String getPosterUrl() {
-        return posterUrl;
+    public byte[] getPosterData() {
+        return posterData;
     }
 
-    public void setPosterUrl(String posterUrl) {
-        this.posterUrl = posterUrl;
+    public void setPosterData(byte[] posterData) {
+        this.posterData = posterData;
     }
 }

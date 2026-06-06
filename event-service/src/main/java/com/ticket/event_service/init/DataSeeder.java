@@ -7,10 +7,14 @@ import com.ticket.event_service.repository.ShowtimeRepository;
 import com.ticket.event_service.service.ShowtimeService;
 import com.ticket.event_service.dto.ShowtimeRequest;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.Properties;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -20,9 +24,9 @@ public class DataSeeder implements CommandLineRunner {
     private final SeatRepository seatRepository;
     private final ShowtimeService showtimeService;
 
-    public DataSeeder(MovieRepository movieRepository, 
-                      ShowtimeRepository showtimeRepository, 
-                      SeatRepository seatRepository, 
+    public DataSeeder(MovieRepository movieRepository,
+                      ShowtimeRepository showtimeRepository,
+                      SeatRepository seatRepository,
                       ShowtimeService showtimeService) {
         this.movieRepository = movieRepository;
         this.showtimeRepository = showtimeRepository;
@@ -33,11 +37,13 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println(">>> STARTING DATA SEEDING CLEANUP <<<");
-        // Dọn dẹp dữ liệu cũ
         seatRepository.deleteAll();
         showtimeRepository.deleteAll();
         movieRepository.deleteAll();
         System.out.println(">>> CLEANUP SUCCESSFUL. STARTING SEEDING MOCK DATA <<<");
+
+        // Load poster images từ file properties (Base64 đã được pre-encoded)
+        Properties posterProps = loadPosterProperties();
 
         // 1. Seed Movies
         Movie movie1 = new Movie();
@@ -46,7 +52,7 @@ public class DataSeeder implements CommandLineRunner {
         movie1.setDurationMinutes(138);
         movie1.setReleaseDate(LocalDate.now().minusDays(10));
         movie1.setEndDate(LocalDate.now().plusDays(30));
-        movie1.setPosterUrl("https://image.lag.vn/upload/news/24/04/29/lat-mat-7-mot-dieu-uoc-khoi-chieu-ngay-26042024_WFYI.jpg");
+        movie1.setPosterData(decodeBase64Poster(posterProps, "lat_mat_7"));
         Movie m1 = movieRepository.save(movie1);
 
         Movie movie2 = new Movie();
@@ -55,7 +61,7 @@ public class DataSeeder implements CommandLineRunner {
         movie2.setDurationMinutes(115);
         movie2.setReleaseDate(LocalDate.now().minusDays(5));
         movie2.setEndDate(LocalDate.now().plusDays(20));
-        movie2.setPosterUrl("https://www.cgv.vn/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/o/doraemon_2024_teaser_poster_1_.jpg");
+        movie2.setPosterData(decodeBase64Poster(posterProps, "doraemon"));
         Movie m2 = movieRepository.save(movie2);
 
         Movie movie3 = new Movie();
@@ -64,7 +70,7 @@ public class DataSeeder implements CommandLineRunner {
         movie3.setDurationMinutes(127);
         movie3.setReleaseDate(LocalDate.now().minusDays(2));
         movie3.setEndDate(LocalDate.now().plusDays(45));
-        movie3.setPosterUrl("https://www.cgv.vn/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/p/dp_w_payoff_1_sheet_vietnam_1_.jpg");
+        movie3.setPosterData(decodeBase64Poster(posterProps, "action"));
         Movie m3 = movieRepository.save(movie3);
 
         Movie movie4 = new Movie();
@@ -73,7 +79,7 @@ public class DataSeeder implements CommandLineRunner {
         movie4.setDurationMinutes(96);
         movie4.setReleaseDate(LocalDate.now().minusDays(1));
         movie4.setEndDate(LocalDate.now().plusDays(25));
-        movie4.setPosterUrl("https://www.cgv.vn/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/i/o/io2_payoff_vietnam_1_sheet_1_.jpg");
+        movie4.setPosterData(decodeBase64Poster(posterProps, "animated_joy"));
         Movie m4 = movieRepository.save(movie4);
 
         Movie movie5 = new Movie();
@@ -82,7 +88,7 @@ public class DataSeeder implements CommandLineRunner {
         movie5.setDurationMinutes(166);
         movie5.setReleaseDate(LocalDate.now().minusDays(20));
         movie5.setEndDate(LocalDate.now().plusDays(15));
-        movie5.setPosterUrl("https://www.cgv.vn/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/d/u/dune_part_two_vietnam_poster_1_.jpg");
+        movie5.setPosterData(decodeBase64Poster(posterProps, "sci_fi"));
         Movie m5 = movieRepository.save(movie5);
 
         // 2. Seed Showtimes cho 3 ngày (Hôm nay, Ngày mai, Ngày kia)
@@ -119,6 +125,38 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         System.out.println(">>> MOCK DATA SEEDING COMPLETED SUCCESSFULLY! <<<");
+    }
+
+    /**
+     * Tải file posters.properties từ classpath chứa dữ liệu ảnh dạng Base64.
+     */
+    private Properties loadPosterProperties() {
+        Properties props = new Properties();
+        try {
+            ClassPathResource resource = new ClassPathResource("posters.properties");
+            props.load(resource.getInputStream());
+            System.out.println(">>> Poster properties loaded successfully. <<<");
+        } catch (IOException e) {
+            System.err.println("Warning: Could not load posters.properties: " + e.getMessage());
+        }
+        return props;
+    }
+
+    /**
+     * Giải mã chuỗi Base64 từ properties thành mảng byte[] để lưu vào DB.
+     */
+    private byte[] decodeBase64Poster(Properties props, String key) {
+        String b64 = props.getProperty(key);
+        if (b64 == null || b64.isBlank()) {
+            System.err.println("Warning: No poster data found for key: " + key);
+            return null;
+        }
+        try {
+            return Base64.getDecoder().decode(b64.trim());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Warning: Failed to decode poster for key: " + key + " - " + e.getMessage());
+            return null;
+        }
     }
 
     private void createShowtime(java.util.UUID movieId, LocalDate date, int startH, int startM, int endH, int endM, String room, String price) {

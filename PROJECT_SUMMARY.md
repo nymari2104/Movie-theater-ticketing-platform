@@ -128,15 +128,16 @@ Khi xảy ra lỗi (ví dụ: trùng ghế, không tìm thấy phim, sai dữ li
     ```json
     {
       "code": "SUCCESS",
-      "message": "Get all movies successfully",
+      "message": "Success",
       "data": [
         {
           "id": "bd298426-ef40-441a-9b21-3d20bfffa316",
           "title": "Lật Mặt 7: Một Điều Ước",
-          "genre": "Drama/Family",
-          "duration": 138,
+          "description": "Bộ phim tâm lý tình cảm gia đình đầy cảm động và ý nghĩa của đạo diễn Lý Hải.",
+          "durationMinutes": 138,
           "releaseDate": "2026-06-05",
-          "posterUrl": "https://image.lag.vn/upload/news/24/04/29/lat-mat-7-mot-dieu-uoc-khoi-chieu-ngay-26042024_WFYI.jpg"
+          "endDate": "2026-07-05",
+          "posterBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA="
         }
       ]
     }
