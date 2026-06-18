@@ -82,6 +82,14 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<jvmArguments>
+						-javaagent:../opentelemetry-javaagent.jar
+						-Dotel.service.name=booking-service
+						-Dotel.exporter.otlp.protocol=http/protobuf
+						-Dotel.resource.attributes=deployment.environment=dev
+					</jvmArguments>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

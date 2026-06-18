@@ -7,6 +7,7 @@ import com.ticket.event_service.repository.ShowtimeRepository;
 import com.ticket.event_service.service.ShowtimeService;
 import com.ticket.event_service.dto.ShowtimeRequest;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.cache.CacheManager;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
@@ -23,20 +24,33 @@ public class DataSeeder implements CommandLineRunner {
     private final ShowtimeRepository showtimeRepository;
     private final SeatRepository seatRepository;
     private final ShowtimeService showtimeService;
+    private final CacheManager cacheManager;
 
     public DataSeeder(MovieRepository movieRepository,
                       ShowtimeRepository showtimeRepository,
                       SeatRepository seatRepository,
-                      ShowtimeService showtimeService) {
+                      ShowtimeService showtimeService,
+                      CacheManager cacheManager) {
         this.movieRepository = movieRepository;
         this.showtimeRepository = showtimeRepository;
         this.seatRepository = seatRepository;
         this.showtimeService = showtimeService;
+        this.cacheManager = cacheManager;
     }
 
     @Override
     public void run(String... args) throws Exception {
         System.out.println(">>> STARTING DATA SEEDING CLEANUP <<<");
+        
+        // Xóa toàn bộ Redis Cache để tránh dữ liệu bị cache cũ
+        if (cacheManager != null) {
+            cacheManager.getCacheNames().forEach(name -> {
+                var cache = cacheManager.getCache(name);
+                if (cache != null) cache.clear();
+            });
+            System.out.println(">>> REDIS CACHES CLEARED SUCCESSFULLY <<<");
+        }
+
         seatRepository.deleteAll();
         showtimeRepository.deleteAll();
         movieRepository.deleteAll();

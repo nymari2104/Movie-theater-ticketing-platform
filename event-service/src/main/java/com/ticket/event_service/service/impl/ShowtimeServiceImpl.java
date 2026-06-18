@@ -73,6 +73,9 @@ public class ShowtimeServiceImpl implements ShowtimeService {
     @Override
     @Cacheable(value = "showtimes", key = "#movieId.toString() + ':' + #showDate.toString()")
     public List<ShowtimeResponse> getShowtimesByMovieAndDate(UUID movieId, LocalDate showDate) {
+        if (!movieRepository.existsById(movieId)) {
+            throw new AppException(EventErrorCode.MOVIE_NOT_FOUND, "Movie not found with id: " + movieId);
+        }
         return showtimeRepository.findByMovieIdAndShowDate(movieId, showDate).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -80,6 +83,9 @@ public class ShowtimeServiceImpl implements ShowtimeService {
 
     @Override
     public List<SeatResponse> getSeatsByShowtime(UUID showtimeId) {
+        if (!showtimeRepository.existsById(showtimeId)) {
+            throw new AppException(EventErrorCode.SHOWTIME_NOT_FOUND, "Showtime not found with id: " + showtimeId);
+        }
         return seatRepository.findByShowtimeId(showtimeId).stream()
                 .map(seat -> new SeatResponse(
                         seat.getId(),

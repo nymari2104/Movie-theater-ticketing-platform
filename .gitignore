@@ -41,3 +41,6 @@ out/
 # System Files
 Thumbs.db
 Desktop.ini
+
+# Environment / Secrets
+.env
